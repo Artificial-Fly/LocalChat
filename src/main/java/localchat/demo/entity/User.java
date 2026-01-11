@@ -12,7 +12,7 @@ public class User {
     private Long id;
     @Column(name = "nickname", unique = true, nullable = false)
     private String nickname;
-    @Column(name = "ip_adress")
+    @Column(name = "ip_address")
     private String ipAdress;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -20,10 +20,10 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String nickname, String ipAdress, LocalDateTime createdAt) {
+    public User(Long id, String nickname, String ipAddress, LocalDateTime createdAt) {
         this.id = id;
         this.nickname = nickname;
-        this.ipAdress = ipAdress;
+        this.ipAdress = ipAddress;
         this.createdAt = createdAt;
     }
 

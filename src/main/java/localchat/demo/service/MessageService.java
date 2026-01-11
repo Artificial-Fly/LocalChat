@@ -11,9 +11,14 @@ import java.util.List;
 
 @Service
 public class MessageService {
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
     private int recentMessageDays = 7;
     private int oldMessageDays = 30;
+
+    public MessageService(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+
     //save message
     public Message saveMessage(String content, User user){
         Message message = new Message();

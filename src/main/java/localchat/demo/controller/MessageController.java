@@ -13,10 +13,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
-    @Autowired
-    private MessageService messageService;
-    @Autowired
-    private UserService userService;
+
+    private final MessageService messageService;
+    private final UserService userService;
 
     public MessageController(MessageService messageService, UserService userService) {
         this.messageService = messageService;
@@ -33,9 +32,9 @@ public class MessageController {
             content = "[empty]";
         }
         User user = userService.getUserByIp(ipAdress);
-        if(user==null){
-            throw new IllegalArgumentException("User cannot be null");
-        }
+//        if(user==null){
+//            throw new IllegalArgumentException("User cannot be null");
+//        }
         return messageService.saveMessage(content.trim(), user);
 
     }

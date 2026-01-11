@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
-    @Query(value = "SELECT * FROM users WHERE ip_adress = :ipAdress", nativeQuery = true)
-    Optional<User> findByIpAdress(@Param("ipAdress") String ipAdress);
-    @Query(value = "SELECT * FROM users WHERE mac_adress = :nickname", nativeQuery = true)
+    @Query(value = "SELECT * FROM users WHERE ip_adress = :ipAddress", nativeQuery = true)
+    Optional<User> findByIpAddress(@Param("ipAddress") String ipAddress);
+    @Query(value = "SELECT * FROM users WHERE nickname = :nickname", nativeQuery = true)
     Optional<User> findByNickname(@Param("nickname") String nickname);
     @Query(value="SELECT EXISTS(SELECT 1 FROM users WHERE nickname = :nickname)", nativeQuery = true)
     boolean existsByNickname(@Param("nickname") String nickname);

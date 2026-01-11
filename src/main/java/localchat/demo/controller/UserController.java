@@ -19,16 +19,16 @@ public class UserController {
 
     @PostMapping
     public User create(@RequestBody Map<String, String> requestBody){
-        String ipAdress = requestBody.get("IpAdress");
-        if (ipAdress==null || ipAdress.trim().isEmpty()){
-            throw new IllegalArgumentException("IP adress cannot be null");
-        }
+        String ipAdress = requestBody.get("ipAdress");
+//        if (ipAdress==null || ipAdress.trim().isEmpty()){
+//            throw new IllegalArgumentException("IP adress cannot be null");
+//        }
         return userService.CreateUserByIp(ipAdress);
     }
     @GetMapping
-    public User get(@RequestParam(value="ip", required = false) String ipAdress, @RequestParam(value = "nickname", required = false) String nickname){
-        if(ipAdress!=null && !ipAdress.trim().isEmpty()){
-            return userService.getUserByIp(ipAdress);
+    public User get(@RequestParam(value="ip", required = false) String ipAddress, @RequestParam(value = "nickname", required = false) String nickname){
+        if(ipAddress!=null && !ipAddress.trim().isEmpty()){
+            return userService.getUserByIp(ipAddress);
         }else if(nickname!=null && !nickname.trim().isEmpty()){
             return userService.getUserByNickname(nickname);
         }else {

@@ -9,7 +9,11 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     //Generate nickname
     private String generateNickname(){
@@ -20,9 +24,9 @@ public class UserService {
         return randomAdj+randomNoun;
     }
     //create user by mac adress
-    public User CreateUserByIp(String ipAdress){
+    public User CreateUserByIp(String ipAddress){
         //check if user already exists
-        Optional<User> existingUser = userRepository.findByIpAdress(ipAdress);
+        Optional<User> existingUser = userRepository.findByIpAddress(ipAddress);
         if(existingUser.isPresent()){
             return existingUser.get();
         }
@@ -34,14 +38,14 @@ public class UserService {
         //set user data
         User user = new User();
         user.setNickname(nickname);
-        user.setIpAdress(ipAdress);
+        user.setIpAdress(ipAddress);
         user.setCreatedAt(LocalDateTime.now());
         //save user
         return userRepository.save(user);
     }
     //get user by mac adress
-    public User getUserByIp(String ipAdress){
-        return userRepository.findByIpAdress(ipAdress).orElse(null);
+    public User getUserByIp(String ipAddress){
+        return userRepository.findByIpAddress(ipAddress).orElse(null);
     }
     //get user by nickname
     public User getUserByNickname(String nickname){
