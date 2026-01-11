@@ -33,10 +33,10 @@ public class MainController {
             return "127.0.0.1";
         }
 
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isEmpty()) {
-            return forwarded.split(",")[0].trim();
-        }
+//        String forwarded = request.getHeader("X-Forwarded-For");
+//        if (forwarded != null && !forwarded.isEmpty()) {
+//            return forwarded.split(",")[0].trim();
+//        }
 
         return clientIp;
     }

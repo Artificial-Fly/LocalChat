@@ -32,9 +32,9 @@ public class MessageController {
             content = "[empty]";
         }
         User user = userService.getUserByIp(ipAdress);
-//        if(user==null){
-//            throw new IllegalArgumentException("User cannot be null");
-//        }
+        if(user==null){
+            throw new IllegalArgumentException("User cannot be null");
+        }
         return messageService.saveMessage(content.trim(), user);
 
     }
