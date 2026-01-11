@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Локальный чат - Главная</title>
+</head>
+<body>
+<h1>Добро пожаловать в локальный чат!</h1>
+
+<div>
+    <p>Ваш IP адрес: <span id="ipAddress" th:text="${ipAdress}">загрузка...</span></p>
+</div>
+
+<div id="userInfo" style="display:none;">
+    <p>Ваш никнейм: <span id="nickname"></span></p>
+    <p>Создан: <span id="createdAt"></span></p>
+</div>
+
+<div>
+    <button onclick="goToChat()">Перейти в чат</button>
+    <button onclick="goToAbout()">О проекте</button>
+    <button onclick="createOrGetUser()">Получить никнейм</button>
+</div>
+
+<div id="statusMessage"></div>
+
+<script>
+    // Получаем IP из Thymeleaf или вычисляем
+    const serverIp = document.getElementById('ipAddress').textContent;
+
+    // Создать или получить пользователя
+    async function createOrGetUser() {
+        try {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = 'Загрузка...';
+
+            // Пытаемся получить существующего пользователя
+            let response = await fetch(`/api/users?ip=${encodeURIComponent(serverIp)}`);
+
+            if (response.ok) {
+                const user = await response.json();
+                showUserInfo(user);
+                statusDiv.innerHTML = 'Пользователь найден!';
+            } else {
+                // Создаем нового пользователя
+                response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ipAdress: serverIp})
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    showUserInfo(user);
+                    statusDiv.innerHTML = 'Новый пользователь создан!';
+                }
+            }
+        } catch (error) {
+            document.getElementById('statusMessage').innerHTML = 'Ошибка: ' + error;
+        }
+    }
+
+    // Показать информацию о пользователе
+    function showUserInfo(user) {
+        document.getElementById('nickname').textContent = user.nickname;
+        document.getElementById('createdAt').textContent = user.createdAt;
+        document.getElementById('userInfo').style.display = 'block';
+
+        // Сохраняем в localStorage для использования в чате
+        localStorage.setItem('currentUser', JSON.stringify(user));
+    }
+
+    // Навигация
+    function goToChat() {
+        window.location.href = '/chat';
+    }
+
+    function goToAbout() {
+        window.location.href = '/about';
+    }
+
+    // Автоматически получаем пользователя при загрузке
+    document.addEventListener('DOMContentLoaded', createOrGetUser);
+</script>
+</body>
+</html>

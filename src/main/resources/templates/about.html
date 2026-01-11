@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>О проекте</title>
+</head>
+<body>
+<h1>О проекте "Локальный чат"</h1>
+
+<div>
+    <h3>Основные возможности:</h3>
+    <ul>
+        <li>Анонимный чат в локальной сети</li>
+        <li>Автоматическая генерация никнеймов</li>
+        <li>Хранение сообщений: 7 дней в чате, 30 дней в БД</li>
+        <li>Без регистрации - идентификация по IP</li>
+        <li>Нет модерации - полная свобода</li>
+    </ul>
+
+    <h3>Технологии:</h3>
+    <ul>
+        <li>Backend: Java + Spring Boot</li>
+        <li>База данных: PostgreSQL</li>
+        <li>Frontend: HTML + JavaScript</li>
+        <li>Архитектура: REST API</li>
+    </ul>
+
+    <h3>Как работает:</h3>
+    <ol>
+        <li>При первом входе система генерирует уникальный никнейм</li>
+        <li>Никнейм сохраняется и привязан к вашему IP</li>
+        <li>Все сообщения анонимны (видны только никнеймы)</li>
+        <li>Сообщения хранятся 7 дней в активном чате</li>
+        <li>Полная история доступна 30 дней</li>
+        <li>Доступно только в локальной сети</li>
+    </ol>
+
+    <h3>Для разработчиков:</h3>
+    <p>Это учебный pet-проект для изучения:</p>
+    <ul>
+        <li>Spring Boot и REST API</li>
+        <li>Работы с базами данных</li>
+        <li>Взаимодействия Frontend и Backend</li>
+        <li>Локальных сетевых приложений</li>
+    </ul>
+
+    <h3>Планы на будущее:</h3>
+    <ul>
+        <li>Добавление WebSocket для мгновенной доставки</li>
+        <li>Микросервисная архитектура</li>
+        <li>Мобильное приложение</li>
+        <li>Возможность выбора темы оформления</li>
+    </ul>
+</div>
+
+<hr>
+
+<div>
+    <button onclick="goToHome()">Главная</button>
+    <button onclick="goToChat()">Чат</button>
+</div>
+
+<div id="testInfo" style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+    <h4>Тест API:</h4>
+    <button onclick="testUserAPI()">Тест User API</button>
+    <button onclick="testMessageAPI()">Тест Message API</button>
+    <button onclick="testFullFlow()">Тест полного цикла</button>
+    <div id="apiResult"></div>
+</div>
+
+<script>
+    // Навигация
+    function goToHome() {
+        window.location.href = '/';
+    }
+
+    function goToChat() {
+        window.location.href = '/chat';
+    }
+
+    // Генерация уникального тестового IP
+    function generateTestIp() {
+        // Используем timestamp для уникальности
+        const timestamp = Date.now();
+        const randomPart = timestamp % 255;
+        return `192.168.88.${randomPart}`; // Более уникальный IP
+    }
+
+    // Генерация уникального тестового MAC (если нужно)
+    function generateTestMac() {
+        const hexDigits = '0123456789ABCDEF';
+        let mac = '02:'; // Локально администрируемый адрес
+        for (let i = 0; i < 5; i++) {
+            mac += hexDigits.charAt(Math.floor(Math.random() * 16));
+            mac += hexDigits.charAt(Math.floor(Math.random() * 16));
+            if (i < 4) mac += ':';
+        }
+        return mac;
+    }
+
+    // Тест User API
+    async function testUserAPI() {
+        try {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'Тестирование User API...';
+
+            // 1. Генерируем уникальный тестовый IP
+            const testIp = generateTestIp();
+
+            // 2. Тест создания пользователя
+            const createResponse = await fetch('/api/users', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ipAdress: testIp})
+            });
+
+            if (!createResponse.ok) {
+                const errorText = await createResponse.text();
+                throw new Error(`HTTP ${createResponse.status}: ${errorText}`);
+            }
+
+            const user = await createResponse.json();
+
+            // 3. Тест получения пользователя
+            const getResponse = await fetch(`/api/users?ip=${encodeURIComponent(testIp)}`);
+            const retrievedUser = await getResponse.json();
+
+            resultDiv.innerHTML = `
+                ✅ User API работает!<br><br>
+
+                <strong>Создан пользователь:</strong><br>
+                Ник: <code>${user.nickname}</code><br>
+                IP: <code>${user.ipAdress}</code><br>
+                ID: ${user.id}<br>
+                Создан: ${user.createdAt}<br><br>
+
+                <strong>Получен пользователь:</strong><br>
+                Ник: <code>${retrievedUser.nickname}</code><br>
+                Совпадение: ${user.nickname === retrievedUser.nickname ? '✅' : '❌'}
+            `;
+
+        } catch (error) {
+            document.getElementById('apiResult').innerHTML = `
+                ❌ Ошибка User API:<br>
+                <code>${error.message}</code><br><br>
+                <small>Проверьте:<br>
+                1. Сервер запущен<br>
+                2. База данных доступна<br>
+                3. API эндпоинты корректны</small>
+            `;
+            console.error('User API Error:', error);
+        }
+    }
+
+    // Тест Message API
+    async function testMessageAPI() {
+        try {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'Тестирование Message API...';
+
+            // 1. Сначала получаем существующие сообщения
+            const getResponse = await fetch('/api/messages?limit=3');
+
+            if (!getResponse.ok) {
+                const errorText = await getResponse.text();
+                throw new Error(`HTTP ${getResponse.status}: ${errorText}`);
+            }
+
+            const messages = await getResponse.json();
+
+            let resultHTML = `
+                ✅ Message API работает!<br><br>
+                <strong>Загружено ${messages.length} сообщений:</strong><br>
+            `;
+
+            if (messages.length > 0) {
+                messages.forEach((msg, index) => {
+                    const time = new Date(msg.createdAt).toLocaleTimeString();
+                    resultHTML += `
+                        ${index + 1}. <strong>${escapeHtml(msg.senderNickname)}</strong>
+                        (${time}): ${escapeHtml(msg.content)}<br>
+                    `;
+                });
+            } else {
+                resultHTML += 'Нет сообщений в чате<br>';
+            }
+
+            // 2. Тест отправки сообщения (только если есть тестовый пользователь)
+            resultHTML += `<br><button onclick="testSendMessage()">Тест отправки сообщения</button>`;
+
+            resultDiv.innerHTML = resultHTML;
+
+        } catch (error) {
+            document.getElementById('apiResult').innerHTML = `
+                ❌ Ошибка Message API:<br>
+                <code>${error.message}</code><br><br>
+                <small>Проверьте:<br>
+                1. Сервер запущен<br>
+                2. База данных доступна<br>
+                3. Таблица messages существует</small>
+            `;
+            console.error('Message API Error:', error);
+        }
+    }
+
+    // Тест отправки сообщения
+    async function testSendMessage() {
+        try {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'Тест отправки сообщения...';
+
+            // 1. Создаем тестового пользователя
+            const testIp = generateTestIp();
+            const userResponse = await fetch('/api/users', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ipAdress: testIp})
+            });
+
+            const user = await userResponse.json();
+
+            // 2. Отправляем тестовое сообщение
+            const messageResponse = await fetch('/api/messages', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    content: `Тестовое сообщение от ${user.nickname} в ${new Date().toLocaleTimeString()}`,
+                    ipAdress: testIp
+                })
+            });
+
+            const newMessage = await messageResponse.json();
+
+            resultDiv.innerHTML = `
+                ✅ Сообщение отправлено!<br><br>
+
+                <strong>Отправлено сообщение:</strong><br>
+                ID: ${newMessage.id}<br>
+                От: ${newMessage.senderNickname}<br>
+                Текст: "${newMessage.content}"<br>
+                Время: ${newMessage.createdAt}<br><br>
+
+                <button onclick="testMessageAPI()">Проверить в общем списке</button>
+            `;
+
+        } catch (error) {
+            document.getElementById('apiResult').innerHTML = `
+                ❌ Ошибка отправки:<br>
+                <code>${error.message}</code>
+            `;
+            console.error('Send Message Error:', error);
+        }
+    }
+
+    // Тест полного цикла
+    async function testFullFlow() {
+        try {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'Тест полного цикла...<br>';
+
+            const steps = [
+                {name: 'Создание пользователя', test: testUserAPI},
+                {name: 'Проверка сообщений', test: testMessageAPI},
+                {name: 'Отправка сообщения', test: testSendMessage}
+            ];
+
+            for (const step of steps) {
+                resultDiv.innerHTML += `▶️ ${step.name}...<br>`;
+                // Здесь можно добавить ожидание
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            resultDiv.innerHTML += '<br>✅ Все тесты запущены!';
+
+        } catch (error) {
+            document.getElementById('apiResult').innerHTML = `
+                ❌ Ошибка тестирования:<br>
+                <code>${error.message}</code>
+            `;
+        }
+    }
+
+    // Экранирование HTML для безопасности
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Дополнительно: проверка состояния сервера
+    async function checkServerStatus() {
+        try {
+            const response = await fetch('/api/messages');
+            if (response.ok) {
+                console.log('✅ Сервер работает');
+                return true;
+            }
+        } catch (error) {
+            console.log('❌ Сервер не отвечает:', error.message);
+            return false;
+        }
+    }
+
+    // Проверить сервер при загрузке страницы
+    document.addEventListener('DOMContentLoaded', async () => {
+        const isServerUp = await checkServerStatus();
+        if (!isServerUp) {
+            const resultDiv = document.getElementById('apiResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    ⚠️ <strong>Внимание:</strong> Сервер может быть не запущен<br>
+                    Запустите приложение и обновите страницу
+                `;
+            }
+        }
+    });
+</script>
+</body>
+</html>
