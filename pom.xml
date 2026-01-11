@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>localchat</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>localchat</artifactId>
 	<version>0.0.1</version>
 	<name>localchat</name>
 	<description>project for local chat</description>
