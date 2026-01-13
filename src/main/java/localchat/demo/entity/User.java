@@ -12,18 +12,18 @@ public class User {
     private Long id;
     @Column(name = "nickname", unique = true, nullable = false)
     private String nickname;
-    @Column(name = "ip_address")
-    private String ipAdress;
+    @Column(name = "uuid")
+    private String uuid;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     public User() {
     }
 
-    public User(Long id, String nickname, String ipAddress, LocalDateTime createdAt) {
+    public User(Long id, String nickname, String uuid, LocalDateTime createdAt) {
         this.id = id;
         this.nickname = nickname;
-        this.ipAdress = ipAddress;
+        this.uuid = uuid;
         this.createdAt = createdAt;
     }
 
@@ -35,8 +35,8 @@ public class User {
         return nickname;
     }
 
-    public String getIpAdress() {
-        return ipAdress;
+    public String getUuid() {
+        return uuid;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -51,8 +51,8 @@ public class User {
         this.nickname = nickname;
     }
 
-    public void setIpAdress(String ipAdress) {
-        this.ipAdress = ipAdress;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

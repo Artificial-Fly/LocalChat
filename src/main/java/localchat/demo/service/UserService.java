@@ -21,12 +21,12 @@ public class UserService {
         String[] nouns = {"Bunny","Wolf","Racoon","Fox","Owl","Gazelle","Crow","Mice","Cat","Dog"};
         String randomAdj = adjectives[(int)(Math.random()*adjectives.length)];
         String randomNoun = nouns[(int)(Math.random()*nouns.length)];
-        return randomAdj+randomNoun;
+        return randomAdj+((int)(Math.random()*999))+randomNoun;
     }
     //create user by mac adress
-    public User CreateUserByIp(String ipAddress){
+    public User CreateUserByUuid(String uuid){
         //check if user already exists
-        Optional<User> existingUser = userRepository.findByIpAddress(ipAddress);
+        Optional<User> existingUser = userRepository.findByUuid(uuid);
         if(existingUser.isPresent()){
             return existingUser.get();
         }
@@ -38,14 +38,14 @@ public class UserService {
         //set user data
         User user = new User();
         user.setNickname(nickname);
-        user.setIpAdress(ipAddress);
+        user.setUuid(uuid);
         user.setCreatedAt(LocalDateTime.now());
         //save user
         return userRepository.save(user);
     }
-    //get user by mac adress
-    public User getUserByIp(String ipAddress){
-        return userRepository.findByIpAddress(ipAddress).orElse(null);
+    //get user by uuid
+    public User getUserByUuid(String uuid){
+        return userRepository.findByUuid(uuid).orElse(null);
     }
     //get user by nickname
     public User getUserByNickname(String nickname){
