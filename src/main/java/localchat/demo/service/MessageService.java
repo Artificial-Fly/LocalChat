@@ -41,4 +41,5 @@ public class MessageService {
         LocalDateTime timeAgo = LocalDateTime.now().minusDays(oldMessageDays);
         messageRepository.deleteOlderThan(timeAgo);
     }
+
 }

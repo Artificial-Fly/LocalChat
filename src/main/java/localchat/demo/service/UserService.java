@@ -52,4 +52,6 @@ public class UserService {
         return userRepository.findByNickname(nickname).orElse(null);
     }
 
+    public String getNicknameByUuid(String uuid){ return userRepository.findNicknameByUuid(uuid).orElse(null);}
+
 }

@@ -16,6 +16,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findMessageSince(@Param("since")LocalDateTime since);
     @Query(value="SELECT * FROM messages ORDER BY created_at DESC LIMIT :limit", nativeQuery = true)
     List<Message> findLastMessages(@Param("limit") int limit);
+
     @Query(value = "DELETE FROM messages WHERE created_at < :olderThan RETURNING *", nativeQuery = true)
     List<Message> deleteOlderThan(@Param("olderThan")LocalDateTime olderThan);
 }
