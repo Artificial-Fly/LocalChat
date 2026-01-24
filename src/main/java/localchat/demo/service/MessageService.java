@@ -3,6 +3,8 @@ package localchat.demo.service;
 import jakarta.transaction.Transactional;
 import localchat.demo.entity.Message;
 import localchat.demo.entity.User;
+import localchat.demo.exception.EmptyMessageException;
+import localchat.demo.exception.UserNotFoundException;
 import localchat.demo.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,12 @@ public class MessageService {
 
     //save message
     public Message saveMessage(String content, User user){
+        if (content==null||content.trim().isEmpty()){
+            throw new EmptyMessageException("error: message is empty");
+        }
+        if(user==null){
+            throw new UserNotFoundException("error: user cannot be empty");
+        }
         Message message = new Message();
         message.setContent(content);
         message.setSenderNickname(user.getNickname());

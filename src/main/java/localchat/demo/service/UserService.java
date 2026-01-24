@@ -1,6 +1,7 @@
 package localchat.demo.service;
 
 import localchat.demo.entity.User;
+import localchat.demo.exception.UserNotFoundException;
 import localchat.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -45,11 +46,11 @@ public class UserService {
     }
     //get user by uuid
     public User getUserByUuid(String uuid){
-        return userRepository.findByUuid(uuid).orElse(null);
+        return userRepository.findByUuid(uuid).orElseThrow(()-> new UserNotFoundException("User not found by uuid"));
     }
     //get user by nickname
     public User getUserByNickname(String nickname){
-        return userRepository.findByNickname(nickname).orElse(null);
+        return userRepository.findByNickname(nickname).orElseThrow(()-> new UserNotFoundException("User not found by nickname"));
     }
 
     public String getNicknameByUuid(String uuid){ return userRepository.findNicknameByUuid(uuid).orElse(null);}

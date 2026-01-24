@@ -29,20 +29,13 @@ public class MessageController {
     //send message
     @PostMapping
     public Message create(@RequestBody Map<String, String> body, HttpServletRequest request){
-        // get message's content and ip adress
+        // get message's content
         String content = body.get("content");
-        //String uuid = body.get("uuid");
-        if(content==null || content.trim().isEmpty()){
-            content = "[empty]";
-        }
         String uuid = extractUuidFromCookies.getUuid(request);
         if(uuid==null){
             throw new IllegalStateException("uuid cockie not found");
         }
         User user = userService.getUserByUuid(uuid);
-        if(user==null){
-            //throw new IllegalArgumentException("User cannot be null");
-        }
         return messageService.saveMessage(content.trim(), user);
 
     }

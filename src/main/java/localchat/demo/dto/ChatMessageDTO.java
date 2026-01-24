@@ -1,4 +1,4 @@
-package localchat.demo.websocket;
+package localchat.demo.dto;
 
 import java.time.LocalDateTime;
 

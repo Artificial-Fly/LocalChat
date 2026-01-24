@@ -5,7 +5,7 @@ import localchat.demo.entity.User;
 import localchat.demo.service.MessageService;
 import localchat.demo.service.UserService;
 import localchat.demo.util.ExtractUuidFromCookies;
-import localchat.demo.websocket.ChatMessageDTO;
+import localchat.demo.dto.ChatMessageDTO;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
