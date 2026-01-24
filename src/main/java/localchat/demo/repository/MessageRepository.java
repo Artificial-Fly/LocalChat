@@ -2,6 +2,7 @@ package localchat.demo.repository;
 
 import localchat.demo.entity.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query(value="SELECT * FROM messages ORDER BY created_at DESC LIMIT :limit", nativeQuery = true)
     List<Message> findLastMessages(@Param("limit") int limit);
 
-    @Query(value = "DELETE FROM messages WHERE created_at < :olderThan RETURNING *", nativeQuery = true)
-    List<Message> deleteOlderThan(@Param("olderThan")LocalDateTime olderThan);
+    @Modifying
+    @Query(value = "DELETE FROM messages WHERE created_at < :olderThan", nativeQuery = true)
+    int deleteOlderThan(@Param("olderThan")LocalDateTime olderThan);
 }

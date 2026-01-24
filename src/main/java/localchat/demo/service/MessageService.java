@@ -1,11 +1,11 @@
 package localchat.demo.service;
 
+import jakarta.transaction.Transactional;
 import localchat.demo.entity.Message;
 import localchat.demo.entity.User;
 import localchat.demo.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,9 +37,10 @@ public class MessageService {
         return messageRepository.findLastMessages(count);
     }
     //clear old messages (30d+)
-    public void clearOldMessages(){
+    @Transactional
+    public int clearOldMessages(){
         LocalDateTime timeAgo = LocalDateTime.now().minusDays(oldMessageDays);
-        messageRepository.deleteOlderThan(timeAgo);
+        return messageRepository.deleteOlderThan(timeAgo);
     }
 
 }
