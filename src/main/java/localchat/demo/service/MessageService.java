@@ -24,10 +24,10 @@ public class MessageService {
     //save message
     public Message saveMessage(String content, User user){
         if (content==null||content.trim().isEmpty()){
-            throw new EmptyMessageException("error: message is empty");
+            throw new EmptyMessageException("Message is empty");
         }
         if(user==null){
-            throw new UserNotFoundException("error: user cannot be empty");
+            throw new UserNotFoundException("User cannot be empty");
         }
         Message message = new Message();
         message.setContent(content);
