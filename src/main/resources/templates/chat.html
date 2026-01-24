@@ -48,6 +48,9 @@
                 const m = JSON.parse(msg.body);
                 addMessage(m.sender, m.content);
             });
+            stompClient.subscribe("/topic/errors", msg => {
+                alert("Ошибка: " + msg.body);
+            });
         });
     }
 
